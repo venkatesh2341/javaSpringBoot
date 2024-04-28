@@ -1,29 +1,22 @@
 package org.example;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        System.out.println("hey");        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        OkHttpClient client = new OkHttpClient();
-        String url= "https://fakestoreapi.com/products";
-        Request request= new Request.Builder()
-                .url(url)
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://jsonplaceholder.typicode.com")
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        try(Response response= client.newCall(request).execute()){
-            System.out.println(response.body().string());
-        }
-        catch (IOException e)
-        {
-            System.out.println(e.getMessage());
-        }
+
+        TodoService todoService = retrofit.create(TodoService.class);
+        Todo todo=  todoService.getTodo("6").execute().body();
+        System.out.println("Got the response from API : " + todo.toString());
     }
 }
